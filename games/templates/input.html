@@ -1,5 +1,9 @@
 {% extends "/home/darmar796/hult_version2/accounts/templates/accounts/master_loggedin.html" %}
 
+{% block title %}
+  Input
+{% endblock %}
+
 {% block content %}
     <h1>Input Form</h1>
     <form action="{% url 'games:input_view' game_id %}" method="post">

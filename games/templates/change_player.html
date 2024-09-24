@@ -1,5 +1,9 @@
 {% extends "/home/darmar796/hult_version2/accounts/templates/accounts/master_loggedin.html" %}
 
+{% block title %}
+  Modify
+{% endblock %}
+
 {% block content %}
     <h1> Player: {{player_name}} </h1>
     <form action="{% url 'games:change_player_name' game_id player_id %}" method="post">
