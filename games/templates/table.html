@@ -1,0 +1,51 @@
+{% extends "/home/darmar796/hult_version2/accounts/templates/accounts/master.html" %}
+
+{% block title %}
+    Hult Reservations
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+      <h2 class="text-center"><u>Upcoming Reservations At Hult Soccer Field </u></h2><br>
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th>players</th>
+            <th>date</th>
+            <th>day</th>
+            <th>start</th>
+            <th>end</th>
+            <th>sunset</th>
+            {% comment %}
+            <th>status</th>
+            <th>name</th>
+            <th>email</th>
+            <th>phone</th>
+            {% endcomment %}
+          </tr>
+        </thead>
+        <tbody>
+        <!-- jinja2 Technique -->
+        {% if d %}
+        {% for i in d %}
+          <tr>
+            <td><a href="/games/{{ i.uuid }}"> Players </a></td>
+            <td>{{i.date}}</td>
+            <td>{{i.day}}</td>
+            <td>{{i.time}}</td>
+            <td>{{i.end_time}}</td>
+            <td>{{i.sunset}}</td>
+            {% comment %}
+            <td bgcolor= "green">{{i.status}}</td>
+            <td>{{i.name}}</td>
+            <td>{{i.email}}</td>
+            <td>{{i.phone}}</td>
+            {% endcomment %}
+          </tr>
+        {% endfor %}
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

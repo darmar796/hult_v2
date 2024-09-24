@@ -1,0 +1,21 @@
+{% extends "/home/darmar796/hult_version2/accounts/templates/accounts/master.html" %}
+
+
+{% block title %}
+  Login Page
+{% endblock %}
+
+
+{% block content %}
+  <h1> Login </h1>
+    <form class="site-form" action="{% url 'accounts:login' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Login">
+    </form>
+
+    <a href="/accounts/signup/"> If you do not have an account click here to create one! </a>
+{% endblock %}
+
+
+

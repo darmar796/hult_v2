@@ -1,0 +1,24 @@
+{% extends "/home/darmar796/hult_version2/accounts/templates/accounts/master.html" %}
+
+{% block title %}
+  Players
+{% endblock %}
+
+
+{% block content %}
+
+  <h1>Players</h1>
+
+  <ol>
+    {% for x in currentplayers %}
+      {% if forloop.counter > 15 %}
+        <li><a href="/games/{{game_id}}/{{x.id}}" style="color: red">{{ x.name }}</a> </li>
+      {% else %}
+        <li><a href="/games/{{game_id}}/{{x.id}}">{{ x.name }}</a> </li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+
+  <p><a href="/games/input/{{game_id}}">Join Waitlist</a></p>
+
+{% endblock %}
