@@ -7,7 +7,16 @@
 
 {% block content %}
 
-  <h1>Players</h1>
+
+  <h1> Remaining Spots: {{players_count}} </h1>
+
+  {% if players_count == 0 %}
+    <h5> Remaining Waitlist Spots: {{waitlist_count}} </h5>
+  {% endif %}
+
+  {% if waitlist_count == 0 %}
+    <h9> Both lists are FULL!!! Check again later! </h9>
+  {% endif %}
 
   <ol>
     {% for x in currentplayers %}
@@ -19,6 +28,7 @@
     {% endfor %}
   </ol>
 
-  <p><a href="/games/input/{{game_id}}">Join Waitlist</a></p>
+  <p><a href="/games/input/{{game_id}}">Join</a></p>
+  <p><a href="/games/">Back</a></p>
 
 {% endblock %}

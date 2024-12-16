@@ -1,0 +1,20 @@
+{% extends "/home/darmar796/hult_version2/accounts/templates/accounts/master_loggedin.html" %}
+
+{% block title %}
+  View
+{% endblock %}
+
+
+{% block content %}
+
+  <h1>Player: {{player_name}} </h1>
+  <h3>Added by: {{user_name}} </h3>
+
+  <p><a href="/games/{{game_id}}/">Back</a></p>
+
+  {% comment %}
+
+  {% endcomment %}
+
+
+{% endblock %}

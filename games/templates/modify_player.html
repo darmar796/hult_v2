@@ -8,6 +8,7 @@
 {% block content %}
 
   <h1>Player: {{player_name}} </h1>
+  <h3>Added by: {{user_name}} </h3>
 
   {% comment %}
   {% if player_name == '---JOIN---' %}
@@ -21,5 +22,7 @@
   <p><a href="/games/{{game_id}}/{{player_id}}/input">Modify</a></p>
 
   <p><a href="/games/{{game_id}}/{{player_id}}/remove">Remove</a></p>
+
+  <p><a href="/games/{{game_id}}/">Back</a></p>
 
 {% endblock %}

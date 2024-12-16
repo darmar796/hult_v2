@@ -4,7 +4,8 @@ from . import views
 app_name = 'games'
 
 urlpatterns = [
-    path('', views.main, name='main'),
+    # path('', views.main, name='main'),
+    path('', views.main2, name='main'),
     # path('members/', views.members, name='members'),
     # path('members/details/<int:id>', views.details, name='details'),
     path('testing/', views.testing, name='testing'),
@@ -13,9 +14,10 @@ urlpatterns = [
     path('input/<str:game_id>/', views.input_view, name='input_view'),
     path('<str:game_id>/<str:player_id>/', views.modify_player, name='modify_player'),
     path('<str:game_id>/<str:player_id>/input/', views.change_player_name, name='change_player_name'),
-    path('<str:game_id>/<str:player_id>/remove/', views.empty_player_name, name='empty_player_name'),
+    # path('<str:game_id>/<str:player_id>/remove/', views.empty_player_name, name='empty_player_name'),
+    path('<str:game_id>/<str:player_id>/remove/', views.delete_player, name='empty_player_name'),
     # path('players/', views.players, name='players'),
-    path('<str:game_id>/', views.players, name='players'),
+    path('<str:game_id>/', views.players2, name='players'),
 
     # path('reservations/', views.Table, name='reservations'),
 ]

@@ -17,10 +17,30 @@ class Player(models.Model):
     game_id = models.CharField(max_length=32, null=True)
     # user_id = models.CharField(max_length=150, null=True)
     user_id = models.IntegerField(null=True)
+    user_name = models.CharField(max_length=150, null=True)
 
 class Game(models.Model):
     id = models.CharField(max_length=32, primary_key=True)
     players = models.ManyToManyField(Player, null=True)
+    storage = models.IntegerField(default=25, null=True)  # 15 spots plus 10 spots on waitlist
+
+    def is_full(self):
+        return self.storage <= self.players.all().count()
+
+# class Game2(models.Model):
+#     id = models.CharField(max_length=32, primary_key=True)
+#     players = models.ManyToManyField(Player, null=True)
+#     storage = models.IntegerField(default=15)
+
+#     def is_full(self):
+#         return self.storage <= self.players.all().count()
+
+# class Waitlist(models.Model):
+#     id = models.CharField(max_length=32, primary_key=True)
+#     players = models.ManyToManyField(Player, null=True)
+#     game_id = models.CharField(max_length=32, null=True)
+#     storage = models.IntegerField(default=5)
+
 
 class AddReservation(forms.Form):
     date = forms.DateField(input_formats=['%Y-%m-%d'], widget=forms.widgets.DateInput(attrs={'type': 'date'}))

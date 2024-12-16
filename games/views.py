@@ -38,6 +38,28 @@ def players(request, game_id):
   return HttpResponse(template.render(context, request))
 
 
+def players2(request, game_id):
+  game = Game.objects.get(id=game_id)
+  game.players.set(Player.objects.filter(game_id=game_id))
+  currentplayers = game.players.all().values() # get players from game with game_id
+
+  total_players = currentplayers.count()
+  players_count = (15 - total_players) if total_players <= 15 else 0  # this is opposite of players count, e.g. remaining open spots
+  waitlist_count = (10 - (total_players - 15)) if total_players > 15 else 10  # this is opposite of waitlist count, e.g. remaining open waitlist spots
+
+  if request.user.is_authenticated:
+      template = loader.get_template('list_players_loggedin.html')
+  else:
+      template = loader.get_template('list_players.html')
+  context = {
+      'currentplayers': currentplayers,
+      'game_id': game_id,
+      'players_count': players_count,
+      'waitlist_count': waitlist_count
+      }
+  return HttpResponse(template.render(context, request))
+
+
 def details(request, id):
   mymember = Member.objects.get(id=id)
   template = loader.get_template('details.html')
@@ -61,7 +83,7 @@ def short_day(day):
 
     return map[day]
 
-def main(request):
+def main(request):  # not used anymore, refer to main2
 
     gsheets_service_key = "/home/darmar796/autofill_websites/autofill_websites/hult-auto-reservation-1a0360021964.json"
     main_log_gsheet = "Hult Reservations"
@@ -121,7 +143,69 @@ def main(request):
 
     return HttpResponse(template.render(context, request))
 
+
+def main2(request):
+
+    gsheets_service_key = "/home/darmar796/autofill_websites/autofill_websites/hult-auto-reservation-1a0360021964.json"
+    main_log_gsheet = "Hult Reservations"
+
+    logger = GSheetsLogger(service_key=gsheets_service_key)
+    logger.open_spreadsheet(main_log_gsheet)
+
+    # bot's log
+    logger.select_sheet(2)
+    df_log_bot = logger.get_log()
+
+    # manual log
+    logger.select_sheet(3)
+    df_log_manual = logger.get_log()
+    # filter manual log from today's date onwards
+    todays_date = date.today().isoformat()  # grab today's date
+
+    # grab dates from today onwards (e.g. do not display past manual reservations)
+    filtered_df = df_log_manual.loc[df_log_manual['date'] >= todays_date]
+
+    # bot + manual reservations combined in one data frame
+    df_log = pd.concat([df_log_bot, filtered_df])
+
+    # arange by date
+    df_log['date'] = pd.to_datetime(df_log['date'])
+    df_log = df_log.sort_values(by='date')
+
+    # fix the formatting from datetime to string
+    df_log['date'] = df_log['date'].dt.strftime('%Y-%m-%d')
+
+    # shorten the day to 3 letters
+    df_log['day'] = df_log['day'].apply(short_day)
+
+    # every row create Game model, this will hold list of players
+    # for game_id in df_log['id']:
+    for game_id in df_log['uuid']:
+
+        if not Game.objects.filter(id=game_id).exists():
+            game_to_add = Game(id=game_id)
+            game_to_add.save()
+            # for i in range(15): # this goes away, no pre-init of players, start with empty list
+            #     # initialize 15 open spots
+            #     player_to_add = Player(name='---JOIN---', game_id=game_id, user_id=None)
+            #     player_to_add.save()
+
+
+    # parsing the DataFrame in json format.
+    json_records = df_log.reset_index().to_json(orient ='records')
+    data = []
+    data = json.loads(json_records)
+    context = {'d': data}
+
+    if request.user.is_authenticated:
+        template = loader.get_template('table_loggedin.html')
+    else:
+        template = loader.get_template('table.html')
+
+    return HttpResponse(template.render(context, request))
+
 def testing(request):
+  games = Game2.objects.all().values()
   mymembers = Member.objects.all().values()
   template = loader.get_template('template.html')
   context = {
@@ -146,10 +230,16 @@ def input_view(request, game_id):
         form = InputForm(request.POST)
         if form.is_valid():
             # Save the data to the database
-            name = form.cleaned_data['name']
-            player_to_add = Player(name=name, game_id=game_id, user_id=request.user.id)
-            player_to_add.save()
-            # game.players.set(Player.objects.all())
+            name = form.cleaned_data['name'] # grab info from the form (e.g. name)
+
+            # if Game list is full add player to waitlist for that game
+            game = Game.objects.get(id=game_id)
+            if not game.is_full():
+                player_to_add = Player(name=name, game_id=game_id, user_id=request.user.id, user_name=request.user.username)
+                player_to_add.save()
+                game.players.set(Player.objects.filter(game_id=game_id))
+            else:
+                print("Game is FULL!")  # @todo prompt the user that the game is full.
 
             # Redirect the user to another page
             return HttpResponseRedirect(f'/games/{game_id}/')  # need to go to game_id
@@ -178,11 +268,12 @@ def change_player_name(request, game_id, player_id):
             # print(f"{player_to_modify.user_id == 'None'}")
             # print(f"{player_to_modify.user_id is None}")
 
-            if request.user.id == player_to_modify.user_id or player_to_modify.user_id is None:
+            if request.user.id == player_to_modify.user_id or player_to_modify.user_id is None or request.user.is_superuser:
                 # Save the data to the database
                 name = form.cleaned_data['name']
                 player_to_modify.name = name
                 player_to_modify.user_id = request.user.id
+                player_to_modify.user_name = request.user.username
                 player_to_modify.save()
             # game.players.set(Player.objects.all())
 
@@ -201,7 +292,7 @@ def change_player_name(request, game_id, player_id):
 
 
 @login_required(login_url="/accounts/login/")
-def empty_player_name(request, game_id, player_id):
+def empty_player_name(request, game_id, player_id):  # NOT used anymore, delete_player used instead
 
     if request.user.is_authenticated:
         # Do something for authenticated users.
@@ -216,7 +307,7 @@ def empty_player_name(request, game_id, player_id):
         # print(type(request.user.id))
         # print(type(game_to_modify.players.get(id=player_id).user_id))
 
-        if request.user.id == game_to_modify.players.get(id=player_id).user_id or game_to_modify.players.get(id=player_id).user_id is None :
+        if request.user.id == game_to_modify.players.get(id=player_id).user_id or game_to_modify.players.get(id=player_id).user_id is None or request.user.is_superuser :
             player_to_modify = game_to_modify.players.get(id=player_id)
             player_to_modify.name = '---JOIN---'
             player_to_modify.user_id = None
@@ -227,6 +318,25 @@ def empty_player_name(request, game_id, player_id):
         return HttpResponseRedirect('/accounts/login/')
 
 
+@login_required(login_url="/accounts/login/")
+def delete_player(request, game_id, player_id):
+
+    if request.user.is_authenticated:
+        # Do something for authenticated users.
+        game_to_modify = Game.objects.get(id=game_id)
+
+        # print(f"EMPTY USER ID1::::::::::::::::::::::::: {request.user.id}")
+
+        # print(f"EMPTY USER ID2::::::::::::::::::::::::: {game_to_modify.players.get(id=player_id).user_id}")
+
+        if request.user.id == game_to_modify.players.get(id=player_id).user_id or game_to_modify.players.get(id=player_id).user_id is None or request.user.is_superuser:
+            player_to_modify = game_to_modify.players.get(id=player_id)
+            player_to_modify.delete() # remove player from the game
+        return HttpResponseRedirect(f'/games/{game_id}/')  # need to go to game_id
+    else:
+        # Do something for anonymous users.
+        return HttpResponseRedirect('/accounts/login/')
+
 
 
 @login_required(login_url="/accounts/login/")
@@ -234,14 +344,23 @@ def modify_player(request, game_id, player_id):
     game_to_modify = Game.objects.get(id=game_id)
     player_to_modify = game_to_modify.players.get(id=player_id)
     player_name = player_to_modify.name
+    user_name = player_to_modify.user_name
 
-    if player_name == '---JOIN---':
-        return HttpResponseRedirect(f'/games/{game_id}/{player_id}/input')
+    if request.user.id == player_to_modify.user_id or request.user.is_superuser:
+        # display modify and remove option / template
+        template = loader.get_template('modify_player.html')
+    else:
+        # do not display modify and remove option / template
+        template = loader.get_template('view_player.html')
 
-    template = loader.get_template('modify_player.html')
+    # if player_name == '---JOIN---': # not needed anymore
+        # return HttpResponseRedirect(f'/games/{game_id}/{player_id}/input')
+
+    # template = loader.get_template('modify_player.html')
     context = {'game_id': game_id,
                'player_id': player_id,
-                'player_name': player_name}
+                'player_name': player_name,
+                'user_name': user_name}
 
     return HttpResponse(template.render(context, request))
 
