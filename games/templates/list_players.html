@@ -7,28 +7,30 @@
 
 {% block content %}
 
+  <div class="div-3">
+      <h1 class="text-green"> Remaining Spots: {{players_count}} </h1>
 
-  <h1> Remaining Spots: {{players_count}} </h1>
-
-  {% if players_count == 0 %}
-    <h5> Remaining Waitlist Spots: {{waitlist_count}} </h5>
-  {% endif %}
-
-  {% if waitlist_count == 0 %}
-    <h9> Both lists are FULL!!! Check again later! </h9>
-  {% endif %}
-
-  <ol>
-    {% for x in currentplayers %}
-      {% if forloop.counter > 15 %}
-        <li><a href="/games/{{game_id}}/{{x.id}}" style="color: red">{{ x.name }}</a> </li>
-      {% else %}
-        <li><a href="/games/{{game_id}}/{{x.id}}">{{ x.name }}</a> </li>
+      {% if players_count == 0 %}
+        <h5 class="text-red"> Remaining Waitlist Spots: {{waitlist_count}} </h5>
       {% endif %}
-    {% endfor %}
-  </ol>
 
-  <p><a href="/games/input/{{game_id}}">Join</a></p>
-  <p><a href="/games/">Back</a></p>
+      {% if waitlist_count == 0 %}
+        <h9 class="text-red"> Both lists are FULL!!! Check again later! </h9>
+      {% endif %}
+
+      <ol>
+        {% for x in currentplayers %}
+          {% if forloop.counter > 15 %}
+            <li class="text-red"><a href="/games/{{game_id}}/{{x.id}}" style="color: red">{{ x.name }}</a> </li>
+          {% else %}
+            <li class="text-green"><a href="/games/{{game_id}}/{{x.id}}" style="color: #00FF00">{{ x.name }}</a> </li>
+          {% endif %}
+        {% endfor %}
+      </ol>
+
+      <p><a href="/games/input/{{game_id}}"><u>JOIN</u></a></p>
+
+      <p><a href="/games/">Back</a></p>
+  </div>
 
 {% endblock %}

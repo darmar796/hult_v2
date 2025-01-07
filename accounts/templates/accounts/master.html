@@ -1,5 +1,53 @@
 <!DOCTYPE html>
 <html>
+<style>
+html{
+  height: 100%;
+}
+</style>
+
+<style>
+    .div-1 {
+        background-color: #EBEBEB;
+    }
+
+    .div-2 {
+        background-color: #ABBAEA;
+    }
+
+    .div-3 {
+        background-color: rgba(11, 11, 7, 0.85);
+    }
+
+    .text-center {
+        color: #FFFFFF;
+    }
+
+    .text-white{
+        color: #FFFFFF;
+    }
+
+    .text-white2{
+        color: #FFFFFF;
+        background-color: rgba(11, 11, 7, 0.85);
+    }
+
+    .site-form{
+        color: #FFFFFF;
+    }
+
+    .text-red{
+        color: #FF0000;
+    }
+
+    .text-green{
+        color: #00FF00;
+    }
+
+
+</style>
+
+
 <head>
   {% comment %}
   <div><a href="/">RESERVATIONS</a> | <a href="/accounts/signup/">SIGN UP </a> | <a href="/accounts/login/">LOG IN </a> </div> | <a href="/about/">ABOUT</a>
@@ -9,13 +57,49 @@
 
   {% if user.is_authenticated %}
     <p>Welcome {{ user.username }} !</p>
-      <div><a href="/games/">RESERVATIONS</a> | <a href="/games/add_reservation/">ADD RESERVATION </a> | <a href="/games/about/">ABOUT </a> | <a href="/accounts/logout/"> LOG OUT </a>
+      <div class="div-2"><a href="/games/">RESERVATIONS</a> | <a href="/games/add_reservation/">ADD RESERVATION </a> | <a href="/games/about/">ABOUT </a> | <a href="/accounts/logout/"> LOG OUT </a>
   {% endif %}
 
   {% endcomment %}
 
-  <div><a href="/games/">RESERVATIONS</a> | <a href="/games/add_reservation/">ADD RESERVATION </a> | <a href="/games/about/">ABOUT </a> | <a href="/accounts/signup/">SIGN UP </a> | <a href="/accounts/login/">LOG IN </a>
+  <div class="text-white2"><a href="/games/">RESERVATIONS</a> | <a href="/games/add_reservation/">ADD RESERVATION </a> | <a href="/games/about/">ABOUT </a> | <a href="/accounts/signup/">SIGN UP </a> | <a href="/accounts/login/">LOG IN </a></div>
+  <div style="height: 20px; background-color: rgba(11, 11, 7, 0.85);"></div>
 
+<style>
+body {
+  background-image: url('/static/art/soccer_ball.jpg');
+    /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
+
+<style>
+a:link {
+  color: white;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:visited {
+  color: white;
+  background-color: transparent;
+  text-decoration: none;
+}
+a:hover {
+  color: white;
+  background-color: transparent;
+  text-decoration: underline;
+}
+a:active {
+  color: green;
+  background-color: transparent;
+  text-decoration: underline;
+}
+</style>
 
 <title>{% block title %}{% endblock %}</title>
   <meta charset="utf-8">

@@ -5,10 +5,14 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Input Form</h1>
-    <form action="{% url 'games:input_view' game_id %}" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Submit">
-    </form>
+    <div class="div-3">
+        <h1 class="text-white">Enter a name to join the game</h1>
+        <form class="site-form" action="{% url 'games:input_view' game_id %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Join">
+        </form>
+        <p><a href="/games/{{game_id}}/">Back</a></p>
+    </div>
+
 {% endblock %}

@@ -7,14 +7,18 @@
 
 
 {% block content %}
-  <h1> Login </h1>
-    <form class="site-form" action="{% url 'accounts:login' %}" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Login">
-    </form>
+    <div class="div-3">
 
-    <a href="/accounts/signup/"> If you do not have an account click here to create one! </a>
+    <h1 class="text-white"> Login </h1>
+        <form class="site-form" action="{% url 'accounts:login' %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Login">
+        </form>
+
+        <a href="/accounts/signup/"><u>If you do not have an account click here to create one!</u></a>
+
+    </div>
 {% endblock %}
 
 

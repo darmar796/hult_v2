@@ -7,22 +7,24 @@
 
 {% block content %}
 
-  <h1>Player: {{player_name}} </h1>
-  <h3>Added by: {{user_name}} </h3>
+  <div class="div-3">
+      <h1 class="text-white">Player: {{player_name}} </h1>
+      <h3 class="text-white">Added by: {{user_name}} </h3>
 
-  {% comment %}
-  {% if player_name == '---JOIN---' %}
+      {% comment %}
+      {% if player_name == '---JOIN---' %}
 
-  {% else %}
+      {% else %}
 
 
-  {% endif %}
-  {% endcomment %}
+      {% endif %}
+      {% endcomment %}
 
-  <p><a href="/games/{{game_id}}/{{player_id}}/input">Modify</a></p>
+      <p><a href="/games/{{game_id}}/{{player_id}}/input" style="color: yellow">Modify</a></p>
 
-  <p><a href="/games/{{game_id}}/{{player_id}}/remove">Remove</a></p>
+      <p><a href="/games/{{game_id}}/{{player_id}}/remove" style="color: red">Remove</a></p>
 
-  <p><a href="/games/{{game_id}}/">Back</a></p>
+      <p><a href="/games/{{game_id}}/">Back</a></p>
+  </div>
 
 {% endblock %}
