@@ -48,7 +48,10 @@ def players2(request, game_id):
   waitlist_count = (10 - (total_players - 15)) if total_players > 15 else 10  # this is opposite of waitlist count, e.g. remaining open waitlist spots
 
   if request.user.is_authenticated:
-      template = loader.get_template('list_players_loggedin.html')
+      if waitlist_count <= 0 :
+          template = loader.get_template('list_players_loggedin_full.html')
+      else:
+          template = loader.get_template('list_players_loggedin.html')
   else:
       template = loader.get_template('list_players.html')
   context = {
